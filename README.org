@@ -1,0 +1,92 @@
+#+title: Codewars translate and solution
+#+startup: overview
+* Euler Totient Function (欧拉函数)
+** 介绍
+在数论中，欧拉的 totient 是一个算术函数，由欧拉于 1763 年引入，它计算小于或等于 n 且与​​ n 互质的正整数。
+因此，如果 n 是一个正整数，则 φ(n)（由 Gauss 在 1801 年引入的符号）是 gcd(n, k) = 1 的正整数 k ≤ n 的个数。
+totient 函数在数论中很重要，主要是因为它给出了以 n 为模的整数乘法群的阶。
+totient 函数在 RSA 加密系统的定义中也起着关键作用。
+
+比如说， =let n = 9=
+那么 =gcd(9, 3) == gcd(9, 6) = 3= 并且 =gcd(9, 9) == 9=
+另外在 *1 ≤ k ≤ 9* 中的六个数字 *1, 2, 4, 5, 7, 8* 对于 9 为质数
+因此, =φ(9) = 6=
+另外一个例子, =φ(1) = 1= 因为 =gcd(1, 1) = 1=
+
+这个函数一般有两种方法
+- 迭代地计算数字 =k ≤ n= 似的 =gcd(n, k) == 1=
+- 使用欧拉乘积公示
+  这是一个根据 n 的主要除数计算 =φ(n)= 的显式公式:
+  =φ(n) = n * Product (1 - 1/p)=
+  其中乘积曲子除 n 的素数 =p ≤ n=
+  比如 =φ(36) = 36 * (1 - 1/2) * (1 - 1/3) = 36 * 1/2 * 2/3 = 12.=
+  第二种方法似乎更复杂，也不太可能更快，但在实际中，我们经常会寻找具有 n 素数的 =φ(n)=
+  如果 n 是素数，他正确地给出了 =φ(n) == n - 1=
+
+你需要编写 Euler Totient 函数, 该函数将整数 =1 ≤ n= 作为输入并返回 =φ(n)=
+** 代码
+[[file:./src/totient.jl][code]]
+#+begin_src julia
+  function totient(n::Integer)
+    result = n
+
+    i = 2
+    while i * i <= n
+      if n % i == 0
+        result = result / i * (i - 1)
+
+        while n % i == 0
+          n /= i
+        end
+      end   
+      i += 1
+    end
+
+    if n > 1
+      result = result / n * (n - 1)
+    end
+
+    return result
+  end
+#+end_src
+
+* Perimeter of squares in a rectangle (长方形中正方形的周长)
+** 描述
+#+DOWNLOADED: screenshot @ 2022-07-01 11:15:56
+[[file:images/Perimeter_of_squares_in_a_rectangle_(长方形中正方形的周长)/2022-07-01_11-15-56_screenshot.png]]
+图中显示了6个正方形，边长分别为 1，1，2，3，5，8
+很容易看出，这些正方形的周长之和为: 4 * (1 + 1 + 2 + 3 + 5 + 8) = 4 * 20 = 80
+当有 n + 1 个正方形以与途中相同的方式排列时，您能否给出矩形中所有正方形的周长之和
+** 解析
+[[file:./src/perimeter.jl][code]]
+#+begin_src julia
+  using Fibonacci
+
+  function perimeter(n::Integer)
+    return reduce(+, Iterators.take(fibs, n)) * 4
+  end
+#+end_src
+* Weight for weight
+** 描述
+我的朋友和我是 "Fat to Fit Club" 的成员
+John 很担心，因为每个月都会发布一个包含成全体重的列表，并且每个月他都是列表中的最后一个，这意味着他
+是最重的
+我是建立名单的人，所以我告诉他, 别担心，我会修改名单的顺序
+决定将 体重 归因于数字。从现在开始，一个数字的权重讲师其数字的综合
+列入, 99 的 "重量" 为 18, 100 的重量为 1, 因此在列表中 100 将位于 99 之前
+给定一个 FFC 成员体重按正常顺序排列的字符床，你能给出这个按这些数字的 "权重" 排序的字符串吗
+
+** 解析
+[[file:./src/orderweight.jl][code]]
+*就是把数字中的每个数相加作为排序依据*
+#+begin_src julia
+  function orderweight(str)
+    getweight(s) = reduce(+, map(x -> parse(Int, x), collect(s)))
+    split(str, " ") |>
+      nums -> sort(nums, by = getweight) |>
+      nums -> join(nums, " ")
+  end
+#+end_src
+测试的时候有点问题，没有通过
+
+* Magnet paricules in boxes

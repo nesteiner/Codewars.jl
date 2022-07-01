@@ -1,0 +1,8 @@
+name = "Codewars"
+uuid = "aa6531c2-d029-41ca-ab70-4420c997d9c0"
+authors = ["steiner <steiner3044@163.com>"]
+version = "0.1.0"
+
+[deps]
+Fibonacci = "b10a97e9-88a1-4e02-932d-11eb35bf1806"
+Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
