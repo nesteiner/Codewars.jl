@@ -90,3 +90,45 @@ John 很担心，因为每个月都会发布一个包含成全体重的列表，
 测试的时候有点问题，没有通过
 
 * Magnet paricules in boxes
+** 描述
+Chanmbouliard 教授刚刚发现了一种新的磁体材料，他将这种材料的例子放在一个由 K 行 N 列排列的小盒子组成
+的盒子中，作为一个 2D 矩阵 K x N , 其中 K 和 N 是正整数
+他认为他的计算表明，小盒子 (k, n) 中的例子所施加的力为
+
+#+DOWNLOADED: screenshot @ 2022-07-03 14:33:01
+[[file:images/Magnet_paricules_in_boxes/2022-07-03_14-33-01_screenshot.png]]
+k = 1 时第一行施加的总力为
+
+#+DOWNLOADED: screenshot @ 2022-07-03 14:34:04
+[[file:images/Magnet_paricules_in_boxes/2022-07-03_14-34-04_screenshot.png]]
+我们可以继续 k = 2 然后 k = 3 等等，并考虑
+
+#+DOWNLOADED: screenshot @ 2022-07-03 14:34:57
+[[file:images/Magnet_paricules_in_boxes/2022-07-03_14-34-57_screenshot.png]]
+为了帮助 Chambouliard 教授，我们能否计算函数 =doubles= ，他将作为参数 =maxk= 和 =maxn= 使得
+=doubls(maxk, maxn) = S(maxk, maxn)=  ?
+经验似乎表明，当 =maxk= 和 =maxn= 足够大时，这可能是 0.7 左右
+** 解析
+[[file:./src/doubles.jl][code]]
+#+begin_src julia
+  function doubles(maxk, maxn)
+    pow(x, n) = reduce(*, repeat([x], n))
+    v((k, n)) = 1 / (k * pow((n + 1.), 2k))
+
+    # ∑(v(k, n) for n = 1:maxn, k = 1:maxk)
+    reduce(+ ,map(v, Iterators.product(1:maxk, 1:maxn)))
+  end
+#+end_src
+
+这边的 =pow(n + 1.)= 是重点，如果是 =pow(n + 1)= 的话，最后的结果会变成 =Inf=
+
+* Which x for that sum
+** 描述
+考虑序列 U(n, x) = x + 2x^2 + 3x^3 + .. + nx^n
+其中 x 是实数，n是正整数
+当 n 趋于无穷大且 x 具有正确的值(即 x 在其收敛域 D 中)时, U(n, x) 会达到取决于x的有限极限 m
+
+通常给定 x 我们试图找到 m
+在这里，我们将尝试给定 m (m 是实数且 m > 0)时找到 x (x是实数且 0 < x < 1)
+让我们调用求解函数 solve(m) 他返回x
+例如当 n 趋于无穷大时，U(n, x) 趋于 m
